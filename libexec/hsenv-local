@@ -2,14 +2,14 @@
 #
 # Summary: Persist the preferred NodeJS version in the cwd.
 #
-# Usage: nodenv local <version>
-#        nodenv local --unset|-u
+# Usage: hsenv local <version>
+#        hsenv local --unset|-u
 
 # Bomb out if we hit an error, ever
 set -e
 
 # Verbose output in debug mode
-[ -n "$NODENV_DEBUG" ] && {
+[ -n "$HSENV_DEBUG" ] && {
   set -x
 }
 
@@ -18,7 +18,7 @@ version="$1"
 
 case "$version" in
   "")
-    echo "nodenv: a version or --unset is required" >&2
+    echo "hsenv: a version or --unset is required" >&2
     exit 1
     ;;
 
@@ -30,7 +30,7 @@ case "$version" in
       rm "$(pwd)/.nvm-version"
       echo "Unset local .nvm-version file"
     else
-      echo "nodenv: no local version to unset" >&2
+      echo "hsenv: no local version to unset" >&2
       exit 1
     fi
     ;;

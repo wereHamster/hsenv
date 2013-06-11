@@ -1,12 +1,12 @@
 #!/usr/bin/env bash
-# Summary: Configure the shell environment for nodenv
-# Usage: eval "$(nodenv init - [<shell>])"
+# Summary: Configure the shell environment for hsenv
+# Usage: eval "$(hsenv init - [<shell>])"
 
 # Bomb out if we hit an error, ever
 set -e
 
 # Verbose output in debug mode
-[ -n "$NODENV_DEBUG" ] && {
+[ -n "$HSENV_DEBUG" ] && {
   set -x
 }
 
@@ -44,7 +44,7 @@ abs_dirname() {
   cd "$cwd"
 }
 
-# Set the root of our nodenv install
+# Set the root of our hsenv install
 root="$(abs_dirname "$0")/.."
 
 if [ -z "$print" ]; then
@@ -63,17 +63,17 @@ if [ -z "$print" ]; then
     ;;
   esac
 
-  { echo "# Load nodenv automatically by adding"
+  { echo "# Load hsenv automatically by adding"
     echo "# the following to ${profile}:"
     echo
-    echo 'eval "$(nodenv init -)"'
+    echo 'eval "$(hsenv init -)"'
     echo
   } >&2
 
   exit 1
 fi
 
-mkdir -p "${NODENV_ROOT}/"{shims,versions}
+mkdir -p "${HSENV_ROOT}/"{shims,versions}
 
-echo 'export PATH="'${NODENV_ROOT}'/shims:${PATH}"'
-echo 'nodenv rehash 2>/dev/null'
+echo 'export PATH="'${HSENV_ROOT}'/shims:${PATH}"'
+echo 'hsenv rehash 2>/dev/null'

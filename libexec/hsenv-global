@@ -2,24 +2,24 @@
 #
 # Summary: Persist the preferred NodeJS default version.
 #
-# Usage: nodenv global <version>
-#        nodenv global --unset|-u
+# Usage: hsenv global <version>
+#        hsenv global --unset|-u
 
 # Bomb out if we hit an error, ever
 set -e
 
 # Verbose output in debug mode
-[ -n "$NODENV_DEBUG" ] && {
+[ -n "$HSENV_DEBUG" ] && {
   set -x
 }
 
 # Set the version
 version="$1"
-version_file="${NODENV_ROOT}/version"
+version_file="${HSENV_ROOT}/version"
 
 case "$version" in
   "")
-    echo "nodenv: a version or --unset is required" >&2
+    echo "hsenv: a version or --unset is required" >&2
     exit 1
     ;;
 
@@ -28,7 +28,7 @@ case "$version" in
       rm "$version_file"
       echo "Unset $version_file"
     else
-      echo "nodenv: no global version to unset" >&2
+      echo "hsenv: no global version to unset" >&2
       exit 1
     fi
     ;;

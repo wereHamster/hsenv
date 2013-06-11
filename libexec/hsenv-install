@@ -1,0 +1,55 @@
+#!/usr/bin/env bash
+# Summary: Install a version of GHC.
+#
+# Usage: hsenv install <version>
+#
+# Versions should be in the form of N.N.N
+#
+# Bomb out if we hit an error, ever
+set -e
+
+# Verbose output in debug mode
+[ -n "$HSENV_DEBUG" ] && {
+  set -x
+}
+
+# Pull the desired version out of ARGV
+version="$1"
+version_dir="$HSENV_ROOT/versions/$version"
+
+# stash the pwd
+OLDPWD=$(pwd)
+
+# Determine url to download from
+platform="$(uname -s | tr '[:upper:]' '[:lower:]')"
+if [ "$platform" = "darwin" ]; then
+  platform="apple-darwin"
+fi
+arch="$(uname -m)"
+
+# URL to download from
+download="http://www.haskell.org/ghc/dist/$version/ghc-$version-$arch-$platform.tar.bz2"
+
+# Can't get too clever here
+set +e
+
+mkdir /tmp/ghc-$version
+cd /tmp/ghc-$version
+
+# Download binary tarball and install
+curl -s -f "$download" > /tmp/ghc-$version.tar.bz2 && \
+  tar jxf /tmp/ghc-$version.tar.bz2 --strip-components 1 && \
+  ./configure --prefix=$version_dir && make install && \
+  rm /tmp/ghc-$version.tar.bz2 || \
+  {
+    cd $OLDPWD
+    rmdir "$version_dir"
+
+    echo "hsenv: unable to install GHC \`$version' from binary, download not available"
+    exit 1
+  }
+
+chmod -R 755 $version_dir
+
+echo "Installed $version"
+cd $OLDPWD
