@@ -16,6 +16,7 @@ set -e
 # Pull the desired version out of ARGV
 version="$1"
 version_dir="$HSENV_ROOT/versions/$version"
+cabal_install_version="1.16.0.2"
 
 # stash the pwd
 OLDPWD=$(pwd)
@@ -27,28 +28,27 @@ if [ "$platform" = "darwin" ]; then
 fi
 arch="$(uname -m)"
 
-# URL to download from
+build_dir="/tmp/hsenv-$version"
+rm -rf $build_dir
+mkdir -p $build_dir $build_dir/ghc $build_dir/cabal-install
+
+# Download and install GHC
 download="http://www.haskell.org/ghc/dist/$version/ghc-$version-$arch-$platform.tar.bz2"
+curl -s -f "$download" > $build_dir/ghc.tar.bz2
+cd $build_dir/ghc
+tar jxf $build_dir/ghc.tar.bz2 --strip-components 1
+./configure --prefix=$version_dir
+make install
 
-# Can't get too clever here
-set +e
+# Download and install cabal-install
+cabal_install_url="http://hackage.haskell.org/packages/archive/cabal-install/$cabal_install_version/cabal-install-$cabal_install_version.tar.gz"
+curl -s -f "$cabal_install_url" > $build_dir/cabal-install.tar.gz
+cd $build_dir/cabal-install
+tar zxf $build_dir/cabal-install.tar.gz --strip-components 1
+$version_dir/bin/ghc-pkg init $build_dir/pkg
+GHC_PACKAGE_PATH=$version_dir/lib/ghc-$version/package.conf.d:$build_dir/pkg PREFIX=$version_dir sh ./bootstrap.sh --global
 
-mkdir /tmp/ghc-$version
-cd /tmp/ghc-$version
-
-# Download binary tarball and install
-curl -s -f "$download" > /tmp/ghc-$version.tar.bz2 && \
-  tar jxf /tmp/ghc-$version.tar.bz2 --strip-components 1 && \
-  ./configure --prefix=$version_dir && make install && \
-  rm /tmp/ghc-$version.tar.bz2 || \
-  {
-    cd $OLDPWD
-    rmdir "$version_dir"
-
-    echo "hsenv: unable to install GHC \`$version' from binary, download not available"
-    exit 1
-  }
-
+rm -rf $build_dir
 chmod -R 755 $version_dir
 
 echo "Installed $version"
