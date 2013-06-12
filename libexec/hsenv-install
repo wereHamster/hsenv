@@ -30,13 +30,14 @@ arch="$(uname -m)"
 
 build_dir="/tmp/hsenv-$version"
 rm -rf $build_dir
-mkdir -p $build_dir $build_dir/ghc $build_dir/cabal-install
+mkdir -p $HSENV_ROOT/cache $build_dir $build_dir/ghc $build_dir/cabal-install
 
 # Download and install GHC
 download="http://www.haskell.org/ghc/dist/$version/ghc-$version-$arch-$platform.tar.bz2"
-curl -s -f "$download" > $build_dir/ghc.tar.bz2
+ghc_cache_file="$HSENV_ROOT/cache/ghc-$version-$arch-$platform.tar.bz2"
+curl -sfC - -o $ghc_cache_file $download
 cd $build_dir/ghc
-tar jxf $build_dir/ghc.tar.bz2 --strip-components 1
+tar jxf $ghc_cache_file --strip-components 1
 ./configure --prefix=$version_dir
 make install
 
@@ -47,7 +48,7 @@ cd $build_dir/cabal-install
 tar zxf $build_dir/cabal-install.tar.gz --strip-components 1
 $version_dir/bin/ghc-pkg init $build_dir/pkg
 GHC_PACKAGE_PATH=$version_dir/lib/ghc-$version/package.conf.d:$build_dir/pkg \
-  PATH=$version_dir/lib/bin:$PATH PREFIX=$version_dir \
+  PATH=$version_dir/bin:$PATH PREFIX=$version_dir \
   sh ./bootstrap.sh --global
 
 rm -rf $build_dir
