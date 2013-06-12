@@ -35,22 +35,23 @@ mkdir -p $HSENV_ROOT/cache $build_dir $build_dir/ghc $build_dir/cabal-install
 # Download and install GHC
 download="http://www.haskell.org/ghc/dist/$version/ghc-$version-$arch-$platform.tar.bz2"
 ghc_cache_file="$HSENV_ROOT/cache/ghc-$version-$arch-$platform.tar.bz2"
-curl -sfC - -o $ghc_cache_file $download ||:
-cd $build_dir/ghc
-tar jxf $ghc_cache_file --strip-components 1
-./configure --prefix=$version_dir
-make install
-
+#curl -sfC - -o $ghc_cache_file $download ||:
+#cd $build_dir/ghc
+#tar jxf $ghc_cache_file --strip-components 1
+#./configure --prefix=$version_dir
+#make install
+#
 # Download and install cabal-install
 cabal_install_url="http://hackage.haskell.org/packages/archive/cabal-install/$cabal_install_version/cabal-install-$cabal_install_version.tar.gz"
 curl -s -f "$cabal_install_url" > $build_dir/cabal-install.tar.gz
 cd $build_dir/cabal-install
 tar zxf $build_dir/cabal-install.tar.gz --strip-components 1
-$version_dir/bin/ghc-pkg init $build_dir/pkg
-EXTRA_CONFIGURE_OPTS=--package-db=$build_dir/pkg \
-  PATH=$version_dir/bin:$PATH PREFIX=$build_dir/pkg \
+$version_dir/bin/ghc-pkg init $build_dir/prefix
+EXTRA_CONFIGURE_OPTS=--package-db=$build_dir/prefix \
+  PATH=$version_dir/bin:$PATH PREFIX=$build_dir/prefix \
   sh ./bootstrap.sh --global
 
+cp $build_dir/prefix/bin/cabal $version_dir/bin/
 rm -rf $build_dir
 chmod -R 755 $version_dir
 
