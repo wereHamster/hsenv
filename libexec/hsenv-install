@@ -46,7 +46,9 @@ curl -s -f "$cabal_install_url" > $build_dir/cabal-install.tar.gz
 cd $build_dir/cabal-install
 tar zxf $build_dir/cabal-install.tar.gz --strip-components 1
 $version_dir/bin/ghc-pkg init $build_dir/pkg
-GHC_PACKAGE_PATH=$version_dir/lib/ghc-$version/package.conf.d:$build_dir/pkg PREFIX=$version_dir sh ./bootstrap.sh --global
+GHC_PACKAGE_PATH=$version_dir/lib/ghc-$version/package.conf.d:$build_dir/pkg \
+  PATH=$version_dir/lib/bin:$PATH PREFIX=$version_dir \
+  sh ./bootstrap.sh --global
 
 rm -rf $build_dir
 chmod -R 755 $version_dir
