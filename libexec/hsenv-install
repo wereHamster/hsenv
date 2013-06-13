@@ -43,9 +43,10 @@ make install
 
 # Download and install cabal-install
 cabal_install_url="http://hackage.haskell.org/packages/archive/cabal-install/$cabal_install_version/cabal-install-$cabal_install_version.tar.gz"
-curl -s -f "$cabal_install_url" > $build_dir/cabal-install.tar.gz
+cabal_install_cache_path="$HSENV_ROOT/cache/cabal-install-$cabal_install_version.tar.gz"
+curl -sfC - -o $cabal_install_cache_path "$cabal_install_url" ||:
 cd $build_dir/cabal-install
-tar zxf $build_dir/cabal-install.tar.gz --strip-components 1
+tar zxf $cabal_install_cache_path --strip-components 1
 $version_dir/bin/ghc-pkg init $build_dir/prefix
 EXTRA_CONFIGURE_OPTS=--package-db=$build_dir/prefix \
   PATH=$version_dir/bin:$PATH PREFIX=$build_dir/prefix \
