@@ -16,7 +16,7 @@ set -e
 # Pull the desired version out of ARGV
 version="$1"
 version_dir="$HSENV_ROOT/versions/$version"
-cabal_install_version="1.16.0.2"
+cabal_install_version="1.18.0.2"
 
 # stash the pwd
 OLDPWD=$(pwd)
@@ -42,7 +42,7 @@ tar jxf $ghc_cache_file --strip-components 1
 make install
 
 # Download and install cabal-install
-cabal_install_url="http://hackage.haskell.org/packages/archive/cabal-install/$cabal_install_version/cabal-install-$cabal_install_version.tar.gz"
+cabal_install_url="http://hackage.haskell.org/package/cabal-install-$cabal_install_version/cabal-install-$cabal_install_version.tar.gz"
 cabal_install_cache_path="$HSENV_ROOT/cache/cabal-install-$cabal_install_version.tar.gz"
 curl -sfC - -o $cabal_install_cache_path "$cabal_install_url" ||:
 cd $build_dir/cabal-install
