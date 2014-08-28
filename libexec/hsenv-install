@@ -24,7 +24,7 @@ OLDPWD=$(pwd)
 # Determine url to download from
 platform="$(uname -s | tr '[:upper:]' '[:lower:]')"
 if [ "$platform" = "darwin" ]; then
-  platform="apple-darwin-mavericks"
+  platform="apple-darwin"
 fi
 arch="$(uname -m)"
 
