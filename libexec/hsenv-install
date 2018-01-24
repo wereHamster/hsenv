@@ -25,6 +25,8 @@ OLDPWD=$(pwd)
 platform="$(uname -s | tr '[:upper:]' '[:lower:]')"
 if [ "$platform" = "darwin" ]; then
   platform="apple-darwin"
+elif [ "$platform" = "linux" ]; then
+  platform="unknown-linux"
 fi
 arch="$(uname -m)"
 
@@ -33,11 +35,11 @@ rm -rf $build_dir
 mkdir -p $HSENV_ROOT/cache $build_dir $build_dir/ghc $build_dir/cabal-install
 
 # Download and install GHC
-download="http://www.haskell.org/ghc/dist/$version/ghc-$version-$arch-$platform.tar.bz2"
-ghc_cache_file="$HSENV_ROOT/cache/ghc-$version-$arch-$platform.tar.bz2"
+download="http://downloads.haskell.org/~ghc/$version/ghc-$version-$arch-$platform.tar.xz"
+ghc_cache_file="$HSENV_ROOT/cache/ghc-$version-$arch-$platform.tar.xz"
 curl -sfC - -L -o $ghc_cache_file $download ||:
 cd $build_dir/ghc
-tar jxf $ghc_cache_file --strip-components 1
+tar xf $ghc_cache_file --strip-components 1
 ./configure --prefix=$version_dir
 make install
 
@@ -48,7 +50,7 @@ cabal_install_url="http://hackage.haskell.org/package/cabal-install-$cabal_insta
 cabal_install_cache_path="$HSENV_ROOT/cache/cabal-install-$cabal_install_version.tar.gz"
 curl -sfC - -o $cabal_install_cache_path "$cabal_install_url" ||:
 cd $build_dir/cabal-install
-tar zxf $cabal_install_cache_path --strip-components 1
+tar xf $cabal_install_cache_path --strip-components 1
 $version_dir/bin/ghc-pkg init $build_dir/prefix
 EXTRA_CONFIGURE_OPTS=--package-db=$build_dir/prefix \
   PATH=$version_dir/bin:$PATH PREFIX=$build_dir/prefix \
