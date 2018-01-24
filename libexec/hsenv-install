@@ -25,6 +25,8 @@ OLDPWD=$(pwd)
 platform="$(uname -s | tr '[:upper:]' '[:lower:]')"
 if [ "$platform" = "darwin" ]; then
   platform="apple-darwin"
+elif [ "$platform" = "linux" ]; then
+  platform="unknown-linux"
 fi
 arch="$(uname -m)"
 
@@ -33,8 +35,8 @@ rm -rf $build_dir
 mkdir -p $HSENV_ROOT/cache $build_dir $build_dir/ghc $build_dir/cabal-install
 
 # Download and install GHC
-download="http://www.haskell.org/ghc/dist/$version/ghc-$version-$arch-$platform.tar.bz2"
-ghc_cache_file="$HSENV_ROOT/cache/ghc-$version-$arch-$platform.tar.bz2"
+download="http://downloads.haskell.org/~ghc/$version/ghc-$version-$arch-$platform.tar.xz"
+ghc_cache_file="$HSENV_ROOT/cache/ghc-$version-$arch-$platform.tar.xz"
 curl -sfC - -L -o $ghc_cache_file $download ||:
 cd $build_dir/ghc
 tar xf $ghc_cache_file --strip-components 1
